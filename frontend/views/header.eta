@@ -1,0 +1,9 @@
+<nav class="header">
+  <button id="openNav">
+    <i class="bi bi-list-nested"></i>
+  </button>
+  <a href="/profile" target="_self">
+    <%= it.user.username %>
+      <img src="https://i.ibb.co/BKFtPCdv/Picsart-25-08-25-16-03-59-709.jpg" width="30" height="30" class="d-inline-block ms-2 img-rounded">
+  </a>
+</nav>

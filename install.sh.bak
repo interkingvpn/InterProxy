@@ -1,0 +1,37 @@
+#!/bin/bash
+# Instalador automático de InterProxy Panel (SQLite)
+
+echo ">>> Actualizando sistema..."
+apt-get update -y && apt-get upgrade -y
+
+echo ">>> Instalando Node.js 18..."
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+apt-get install -y nodejs build-essential -y
+
+echo ">>> Verificando npm..."
+npm -v
+
+echo ">>> Instalando pm2..."
+npm install -g pm2
+
+echo ">>> Instalando dependencias del panel..."
+cd ~/InterProxy || { echo "No existe la carpeta ~/InterProxy"; exit 1; }
+npm install
+
+echo ">>> Eliminando base de datos antigua (si existe)..."
+rm -f database.db
+
+echo ">>> Configurando Prisma..."
+npx prisma generate
+npx prisma migrate deploy
+
+echo ">>> Levantando el panel con PM2..."
+pm2 start ecosystem.config.js --name "InterProxy"
+pm2 save
+pm2 startup -y
+
+echo ">>> Abriendo puerto 3000 en el firewall..."
+ufw allow 3000/tcp || true
+
+echo ">>> Instalación completada."
+echo "Accede a tu panel en: http://$(curl -s ifconfig.me):3000"
